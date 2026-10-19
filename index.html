@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catálogo de Autos | Asesoría Autorizada Car For You</title>
+    <!-- Google Fonts & FontAwesome -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-main: #090d16;
+            --bg-card: #111827;
+            --accent: #3b82f6;
+            --accent-gradient: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            --whatsapp: #22c55e;
+            --whatsapp-hover: #16a34a;
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+            --border-color: rgba(255, 255, 255, 0.08);
+            --radius-lg: 16px;
+            --radius-sm: 8px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            min-height: 100vh;
+        }
+
+        header {
+            background: linear-gradient(to bottom, rgba(15, 23, 42, 0.95), var(--bg-main)), 
+                        url('https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=1920&q=80') center/cover no-repeat;
+            padding: 4rem 1.5rem 3rem;
+            text-align: center;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(59, 130, 246, 0.15);
+            color: var(--accent);
+            padding: 0.5rem 1.25rem;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            margin-bottom: 1.25rem;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+
+        header h1 {
+            font-size: clamp(2.2rem, 5vw, 3.5rem);
+            font-weight: 800;
+            margin-bottom: 0.75rem;
+        }
+
+        header h1 span {
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        header p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            max-width: 650px;
+            margin: 0 auto;
+        }
+
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 3rem 1.5rem;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 2.5rem;
+        }
+
+        /* CARD Y CARRUSEL */
+        .card {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card:hover {
+            transform: translateY(-6px);
+            border-color: rgba(59, 130, 246, 0.4);
+            box-shadow: 0 20px 30px -10px rgba(0, 0, 0, 0.6);
+        }
+
+        /* CONTENEDOR DEL CARRUSEL DE IMÁGENES */
+        .carousel-container {
+            position: relative;
+            height: 240px;
+            overflow: hidden;
+        }
+
+        .carousel-slide {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.4s ease-in-out;
+        }
+
+        .carousel-slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            flex-shrink: 0;
+        }
+
+        /* BOTONES DEL CARRUSEL */
+        .carousel-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(15, 23, 42, 0.75);
+            color: white;
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(4px);
+            transition: var(--transition);
+            z-index: 2;
+        }
+
+        .carousel-btn:hover {
+            background: var(--accent);
+        }
+
+        .carousel-btn.prev { left: 10px; }
+        .carousel-btn.next { right: 10px; }
+
+        /* INDICADORES DEL CARRUSEL (PUNTOS) */
+        .carousel-dots {
+            position: absolute;
+            bottom: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 6px;
+            z-index: 2;
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.4);
+            transition: var(--transition);
+        }
+
+        .dot.active {
+            background: var(--accent);
+            width: 18px;
+            border-radius: 10px;
+        }
+
+        .card-badge {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            background: rgba(9, 13, 22, 0.85);
+            backdrop-filter: blur(6px);
+            color: white;
+            padding: 0.35rem 0.85rem;
+            font-size: 0.8rem;
+            font-weight: 700;
+            border-radius: 50px;
+            border: 1px solid var(--border-color);
+            z-index: 2;
+        }
+
+        .card-body {
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+
+        .card-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 0.35rem;
+        }
+
+        .card-price {
+            font-size: 1.6rem;
+            font-weight: 800;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+        }
+
+        .specs-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.65rem;
+            margin-bottom: 1rem;
+            background: rgba(255, 255, 255, 0.02);
+            padding: 0.85rem;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border-color);
+            font-size: 0.85rem;
+        }
+
+        .spec-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-muted);
+        }
+
+        .spec-item i { color: var(--accent); }
+
+        .specs-list {
+            margin-bottom: 1.5rem;
+            padding-left: 1.2rem;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .specs-list li {
+            margin-bottom: 0.25rem;
+        }
+
+        .btn-whatsapp {
+            margin-top: auto;
+            background-color: var(--whatsapp);
+            color: white;
+            text-decoration: none;
+            padding: 0.85rem 1rem;
+            border-radius: var(--radius-sm);
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.65rem;
+            transition: var(--transition);
+        }
+
+        .btn-whatsapp:hover {
+            background-color: var(--whatsapp-hover);
+        }
+
+        footer {
+            text-align: center;
+            padding: 3rem 1.5rem;
+            margin-top: 4rem;
+            color: var(--text-muted);
+            border-top: 1px solid var(--border-color);
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+
+        <header>
+        <div class="hero-badge">
+            <i class="fa-solid fa-shield-halved"></i> Calidad y Confianza Garantizada
+        </div>
+        <h1>Catálogo de Autos - Asesoría y Ventas por <span>Arturo Pineda Calderon</span>  <br>Asesor Autorizado en Car 4 U.</h1>
+        <p>Explora nuestra selección de vehículos seminuevos revisados y listos para reestrenar. Atención personalizada directa.</p>
+    </header>
+
+    <div class="container">
+        <div class="grid" id="car-catalog"></div>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 Catálogo Digital de Ventas Autorizado. Atención Directa por Asesor Comercial de Car For You.</p>
+    </footer>
+
+    <script>
+        // CONFIGURA AQUÍ EL NÚMERO DE TU PAPÁ (Ejemplo México: 521XXXXXXXXXX)
+        const WHATSAPP_NUMBER = "521XXXXXXXXXX";
+
+        const carsData = [
+            {
+                id: 1,
+                nombre: "Volkswagen Jetta Sportline",
+                precio: "Consultar Precio",
+                year: "2024",
+                transmision: "Automática",
+                km: "Seminuevo",
+                combustible: "Gasolina / Turbo",
+                especificaciones: [
+                    "Motor 1.4 L Turbo TSI (4 cyl)",
+                    "Transmisión TA de 6 velocidades",
+                    "Pantalla 10\" App-Connect inalámbrico",
+                    "Digital Cockpit + Quemacocos",
+                    "Asientos en piel / vinipiel"
+                ],
+                imagenes: [
+                    "images/jetta1.jpeg",
+                    "images/JETTA (1).jpeg",
+                    "images/JETTA (2).jpeg",
+                    "images/JETTA (3).jpeg",
+                    "images/JETTA (4).jpeg",
+                ]
+            },
+            {
+                id: 2,
+                nombre: "Nissan X-Trail Advance 2 Row",
+                precio: "$530,000 MXN",
+                year: "2027",
+                transmision: "Automática",
+                km: "300 km",
+                combustible: "Gasolina",
+                especificaciones: [
+                    "Apenas 300 km recorridos",
+                    "Versión Advance de 2 Filas",
+                    "Excelente espacio y confort"
+                ],
+                imagenes: [
+                    "images/chev.jpeg",
+                   "images/Chev (1).jpeg",
+                   "images/Chev (2).jpeg",
+                   "images/Chev (3).jpeg",
+                   "images/Chev (4).jpeg",
+                   "images/Chev (5).jpeg",
+                   "images/Chev (6).jpeg",
+                   "images/Chev (7).jpeg",
+                   "images/Chev (8).jpeg",
+                   "images/Chev (9).jpeg",
+                ]
+            },
+            {
+                id: 3,
+                nombre: "Kia K3",
+                precio: "Consultar Precio",
+                year: "2026",
+                transmision: "Automática",
+                km: "Seminuevo",
+                combustible: "Gasolina",
+                especificaciones: [
+                    "Motor 1.6 L de 121 hp",
+                    "Pantalla táctil de 8\"",
+                    "ABS + ESC + HAC + 6 bolsas de aire",
+                    "El sedán más amplio del segmento"
+                ],
+                imagenes: [
+                    "images/KIA1.jpeg",
+                    "images/kia (1).jpeg",
+                    "images/kia (2).jpeg",
+                    "images/kia (3).jpeg",
+                ]
+            },
+            {
+                id: 4,
+                nombre: "Chevrolet Traverse LT",
+                precio: "$549,000 MXN",
+                year: "2021",
+                transmision: "Automática",
+                km: "Seminuevo",
+                combustible: "Gasolina",
+                especificaciones: [
+                    "Capacidad para 7 pasajeros",
+                    "Techo Dual SkyScape",
+                    "Hotspot Wi-Fi 4G LTE e infoentretenimiento",
+                    "Sonido premium Bose"
+                ],
+                imagenes: [
+                    "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&w=800&q=80",
+                    "https://images.unsplash.com/photo-1519641471654-76ce0107ad1b?auto=format&fit=crop&w=800&q=80"
+                ]
+            },
+            {
+                id: 5,
+                nombre: "Ford Territory Trend HEV",
+                precio: "$451,000 MXN",
+                year: "2027",
+                transmision: "Automática",
+                km: "Seminuevo",
+                combustible: "Gasolina",
+                especificaciones: [
+                    "Versión Ambiente",
+                    "Amplia SUV familiar",
+                    "Excelente equipamiento"
+                ],
+                imagenes: [
+                    "images/ford.jpeg",
+                   "images/FORD (1).jpeg",
+                   "images/FORD (2).jpeg",
+                   "images/FORD (3).jpeg",
+                   "images/FORD (4).jpeg",
+                   "images/FORD (5).jpeg",
+                   "images/FORD (6).jpeg",
+                   "images/FORD (7).jpeg",
+                ]
+            },
+            {
+                id: 6,
+                nombre: "Ford Territory Trend HEV",
+                precio: "$550,000 MXN",
+                year: "2026",
+                transmision: "Automática",
+                km: "8,000 km",
+                combustible: "Híbrido (HEV)",
+                especificaciones: [
+                    "Motor Híbrido eficiente (HEV)",
+                    "Apenas 8,000 km recorridos",
+                    "Gran ahorro de combustible"
+                ],
+                imagenes: [
+                    "https://images.unsplash.com/photo-1553440569-bcc63803a83d?auto=format&fit=crop&w=800&q=80",
+                    "https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=800&q=80"
+                ]
+            },
+            {
+                id: 7,
+                nombre: "VW Tiguan Highline",
+                precio: "$350,000 MXN",
+                year: "2018",
+                transmision: "Automática",
+                km: "Seminuevo",
+                combustible: "Gasolina Turbo",
+                especificaciones: [
+                    "Motor 2.0 Turbo + Tracción Integral",
+                    "Techo panorámico y asientos en piel",
+                    "Vidrios y espejos eléctricos"
+                ],
+                imagenes: [
+                     "images/tiguan.jpeg",
+                    "images/VW.jpeg",
+                    "images/VW2.jpeg",
+                    "images/VW3.jpeg",
+                    "images/VW4.jpeg",
+                    "images/VW5.jpeg"
+                   
+                ]
+            },
+            {
+                id: 8,
+                nombre: "Mazda CX-9 Grand Touring",
+                precio: "Consultar Precio",
+                year: "2019",
+                transmision: "Automática",
+                km: "Seminuevo",
+                combustible: "Gasolina",
+                especificaciones: [
+                    "Color Negro Fugaz",
+                    "Motor 2.5 Skyactiv-G",
+                    "Camioneta de 3 filas (7 pasajeros)"
+                ],
+                imagenes: [
+                    "images/cx9.jpeg",
+                    "images/cx9 (1).jpeg",
+                    "images/cx9 (2).jpeg",
+                    "images/cx9 (3).jpeg",
+                    "images/cx9 (4).jpeg",
+                    "images/cx9 (5).jpeg",
+                    "images/cx9 (6).jpeg",
+                    "images/cx9 (7).jpeg",
+                    "images/cx9 (8).jpeg",
+                ]
+            }
+        ];
+
+        // RENDERIZAR CATÁLOGO CON CARRUSEL
+        function renderCatalog() {
+            const container = document.getElementById('car-catalog');
+            container.innerHTML = '';
+
+            carsData.forEach((car, index) => {
+                const mensaje = encodeURIComponent(`Hola, me interesa el auto ${car.nombre} (${car.precio}) que vi en el catálogo. ¿Podría darme más informes?`);
+                const waLink = `https://wa.me/${WHATSAPP_NUMBER}?text=${mensaje}`;
+
+                // Generar HTML de imágenes del carrusel
+                const imgHtml = car.imagenes.map(img => `<img src="${img}" alt="${car.nombre}">`).join('');
+                
+                // Generar HTML de indicadores
+                const dotsHtml = car.imagenes.map((_, i) => `<div class="dot ${i === 0 ? 'active' : ''}"></div>`).join('');
+
+                // Generar lista de detalles
+                const specsHtml = car.especificaciones.map(spec => `<li>${spec}</li>`).join('');
+
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.innerHTML = `
+                    <div class="carousel-container" id="carousel-${car.id}">
+                        <div class="card-badge">${car.year}</div>
+                        
+                        ${car.imagenes.length > 1 ? `
+                            <button class="carousel-btn prev" onclick="moveCarousel(${car.id}, -1)"><i class="fa-solid fa-chevron-left"></i></button>
+                            <button class="carousel-btn next" onclick="moveCarousel(${car.id}, 1)"><i class="fa-solid fa-chevron-right"></i></button>
+                        ` : ''}
+
+                        <div class="carousel-slide" style="transform: translateX(0%);">
+                            ${imgHtml}
+                        </div>
+
+                        ${car.imagenes.length > 1 ? `<div class="carousel-dots">${dotsHtml}</div>` : ''}
+                    </div>
+
+                    <div class="card-body">
+                        <h3 class="card-title">${car.nombre}</h3>
+                        <div class="card-price">${car.precio}</div>
+
+                        <div class="specs-grid">
+                            <div class="spec-item"><i class="fa-solid fa-gauge"></i> ${car.km}</div>
+                            <div class="spec-item"><i class="fa-solid fa-gears"></i> ${car.transmision}</div>
+                            <div class="spec-item"><i class="fa-solid fa-gas-pump"></i> ${car.combustible}</div>
+                            <div class="spec-item"><i class="fa-solid fa-calendar"></i> ${car.year}</div>
+                        </div>
+
+                        <ul class="specs-list">
+                            ${specsHtml}
+                        </ul>
+
+                        <a href="${waLink}" target="_blank" class="btn-whatsapp">
+                            <i class="fa-brands fa-whatsapp fa-lg"></i> Pedir Informes
+                        </a>
+                    </div>
+                `;
+
+                container.appendChild(card);
+            });
+        }
+
+        // LÓGICA DE MOVIMIENTO DEL CARRUSEL
+        const carouselStates = {};
+
+        function moveCarousel(carId, direction) {
+            const car = carsData.find(c => c.id === carId);
+            if (!car) return;
+
+            if (carouselStates[carId] === undefined) {
+                carouselStates[carId] = 0;
+            }
+
+            const totalImages = car.imagenes.length;
+            carouselStates[carId] = (carouselStates[carId] + direction + totalImages) % totalImages;
+
+            const currentIndex = carouselStates[carId];
+            const carouselContainer = document.getElementById(`carousel-${carId}`);
+            const slide = carouselContainer.querySelector('.carousel-slide');
+            const dots = carouselContainer.querySelectorAll('.dot');
+
+            slide.style.transform = `translateX(-${currentIndex * 100}%)`;
+
+            dots.forEach((dot, idx) => {
+                if (idx === currentIndex) {
+                    dot.classList.add('active');
+                } else {
+                    dot.classList.remove('active');
+                }
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', renderCatalog);
+    </script>
+</body>
+</html>
